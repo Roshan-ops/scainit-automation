@@ -1,0 +1,32 @@
+stages:
+  - test
+  - notify
+
+test_playwright:
+  stage: test
+  image: mcr.microsoft.com/playwright/python:v1.52.0-jammy
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+  script:
+    - mkdir -p reports
+    - pytest tests --html=reports/report.html --self-contained-html > reports/summary.txt || true
+  artifacts:
+    when: always
+    paths:
+      - reports/
+      - screenshots/
+      - traces/
+    expire_in: 7 days
+
+send_email_report:
+  stage: notify
+  image: python:3.13
+  before_script:
+    - python --version
+  script:
+    - python scripts/send_email_report.py
+  dependencies:
+    - test_playwright
+  when: always
