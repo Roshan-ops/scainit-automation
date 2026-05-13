@@ -1,8 +1,8 @@
 import pytest
-from pages.signup_page import SignupPage
+from apps.ui.pages.auth.signup_page import SignupPage
 from utils.excel_reader import read_signup_test_data
 
-signup_test_data = read_signup_test_data("data/signup_data.xlsx")
+signup_test_data = read_signup_test_data("data/static/signup_data.xlsx")
 
 
 @pytest.mark.smoke

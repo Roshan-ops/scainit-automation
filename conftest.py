@@ -34,27 +34,54 @@
 #             page.screenshot(path=f"screenshots/{item.name}.png", full_page=True)
 
 
-import os
+# import os
+# import pytest
+# from playwright.sync_api import sync_playwright
+# from utils.config import Config
+
+# os.makedirs("screenshots", exist_ok=True)
+# os.makedirs("reports", exist_ok=True)
+# os.makedirs("traces", exist_ok=True)
+
+# @pytest.fixture(scope="session")
+# def browser():
+#     with sync_playwright() as p:
+#         browser = p.chromium.launch(headless=Config.HEADLESS)
+#         yield browser
+#         browser.close()
+
+# @pytest.fixture(scope="function")
+# def page(browser):
+#     context = browser.new_context(viewport={"width": 1440, "height": 900})
+#     context.tracing.start(screenshots=True, snapshots=True, sources=True)
+#     page = context.new_page()
+#     yield page
+#     context.tracing.stop(path="traces/trace.zip")
+#     context.close()
+
+
+
 import pytest
 from playwright.sync_api import sync_playwright
 from utils.config import Config
 
-os.makedirs("screenshots", exist_ok=True)
-os.makedirs("reports", exist_ok=True)
-os.makedirs("traces", exist_ok=True)
-
-@pytest.fixture(scope="session")
-def browser():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=Config.HEADLESS)
-        yield browser
-        browser.close()
-
 @pytest.fixture(scope="function")
-def page(browser):
-    context = browser.new_context(viewport={"width": 1440, "height": 900})
-    context.tracing.start(screenshots=True, snapshots=True, sources=True)
-    page = context.new_page()
-    yield page
-    context.tracing.stop(path="traces/trace.zip")
-    context.close()
+def page():
+    with sync_playwright() as p:
+        browser_type = getattr(p, Config.BROWSER)
+
+        browser = browser_type.launch(
+            headless=Config.HEADLESS,
+            slow_mo=300
+        )
+
+        context = browser.new_context(
+            record_video_dir="reports/videos/"
+        )
+
+        page = context.new_page()
+
+        yield page
+
+        context.close()
+        browser.close()

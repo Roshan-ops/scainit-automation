@@ -6,3 +6,5 @@ python-dotenv
 faker
 pytest-html
 openpyxl
+allure-pytest
+allure-behave

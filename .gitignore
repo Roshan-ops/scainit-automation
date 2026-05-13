@@ -5,4 +5,5 @@ __pycache__/
 allure-results/
 allure-report/
 reports/
-node_modules/
+node_modules/.gitlab-ci.yml
+
